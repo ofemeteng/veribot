@@ -11,6 +11,10 @@ app.use(bodyParser.urlencoded({
 	extended: true
 }));
 
+app.get('/', (req, res) => {
+	res.send('Hello Heroku!')
+});
+
 app.get('/webhook', (req, res) => {
 	if (req.query['hub.mode'] == 'subscribe' &&
 		req.query['hub.verify_token'] == process.env.VERIFY_TOKEN) {
