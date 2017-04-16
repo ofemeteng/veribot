@@ -1,1 +1,3 @@
-web: node index.js $PORT
+web: node bot.js
+worker: node bot.js
+heroku ps:scale worker=1
