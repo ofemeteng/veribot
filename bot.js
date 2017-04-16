@@ -12,7 +12,7 @@ app.use(bodyParser.urlencoded({
 }));
 
 app.get('/', (req, res) => {
-	res.send('Hello Heroku!')
+	res.send('Hello Heroku!');
 });
 
 app.get('/webhook', (req, res) => {
