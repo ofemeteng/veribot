@@ -56,6 +56,7 @@ app.post('/webhook', (req, res) => {
 	if (data.object == 'page') {
 		data.entry.forEach((entry) => {
 			entry.messaging.forEach((event) => {
+				senderID = event.sender.id;
 				senderActions(senderID);
 				if (event.message) {
 					receivedMessage(event);
