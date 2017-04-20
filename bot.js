@@ -22,14 +22,46 @@ app.get('/webhook', (req, res) => {
 	}
 });
 
+// Setup messenger profile for getting started and greeting text
+app.get('/setup', (req, res) => {
+	request({
+		uri: 'https://graph.facebook.com/v2.6/me/messenger_profile?access_token=' + process.env.PAGE_ACCESS_TOKEN,
+		method: 'POST',
+		json: {
+			"get_started":{
+			    "payload": 'GET_STARTED_PAYLOAD'
+			  },
+			  "greeting":[
+			    {
+			      "locale": 'default',
+			      "text": 'Hi, I am Veribot and I can help you identify fake news stories'
+			    }
+			  ]
+		}
+	}, (error, response, body) => {
+		if (!error && response.statusCode == 200) {
+			console.log('Bot profile set');
+			res.status(200).send('Bot Profile set');
+		} else {
+			console.error('Error: Bot profile setup failed', error);
+			res.sendStatus(400);
+
+		}
+	});
+});
+
 //Handle all messages by first iterating over entries if batched
 app.post('/webhook', (req, res) => {
 	let data = req.body;
 	if (data.object == 'page') {
 		data.entry.forEach((entry) => {
 			entry.messaging.forEach((event) => {
+				senderActions(senderID);
 				if (event.message) {
 					receivedMessage(event);
+				}
+				else if (event.postback) {
+					receivedPostback(event);
 				} else {
 					console.log('Error: Webhook received invalid event', event);
 				}
@@ -50,6 +82,45 @@ function receivedMessage(event) {
            } else if (messageAttachments) {
              sendTextMessage(senderID, "Message with attachment received");
            }
+}
+
+// handle postback event
+function receivedPostback(event) {
+	let senderID = event.sender.id;
+	let recipientID = event.recipient.id;
+	let payload = event.postback.payload;
+	let token = process.env.PAGE_ACCESS_TOKEN
+	let profileUrl = `https://graph.facebook.com/v2.6/${senderID}?fields=first_name,last_name&access_token=${token}`
+
+	// check payload received in postback event in order to send appropriate response
+	if (payload == 'GET_STARTED_PAYLOAD') {
+			request.get(profileUrl, (err, response, body) => {
+				if (!err && response.statusCode == 200) {
+					let json = JSON.parse(body);
+					var text = '';
+					// set personalised message with first name if available in received object
+					if (json.hasOwnProperty('first_name')) {
+						text = 'Hello  ' + json.first_name + ', I am Veribot and I can help you identify fake news stories. \n To get my attention simply type "Is it true that" followed by the news headline or snippet like so, "Is it true that South Koreans mock Trump\'s armada \'bluff\'"';
+					} else {
+						text = 'Hello , I am Veribot and I can help you identify fake news stories. \n To get my attention simply type "Is it true that" followed by the news headline or snippet like so, "Is it true that South Koreans mock Trump\'s armada \'bluff\'"';
+					}
+
+					let messageData = {
+						recipient: {
+						id: recipientID
+						},
+						message: {
+						  text: text
+						}
+					}
+
+					callSendAPI(messageData);
+					
+				} else {
+					console.log('Error: Failed to get user profile')
+				}
+			});
+	}
 }
 
 function sendTextMessage(recipientID, messageText) {
@@ -125,6 +196,27 @@ function callSendAPI(messageData) {
 			console.error('Error: Message sending failed', error);
 		}
 	});
+}
+
+// Set typing indicator
+function senderActions(senderID) {
+	request({
+		uri: 'https://graph.facebook.com/v2.6/me/messages?access_token=' + process.env.PAGE_ACCESS_TOKEN,
+		method: 'POST',
+		json: {
+		  "recipient":{
+		  	"id": senderID
+		  },
+		  "sender_action":'typing_on'
+		}
+	}, (error, response, body) => {
+		if (!error && response.statusCode == 200) {
+			console.log('Sender actions sent');
+		} else {
+			console.error('Error: Sender actions failed', error);
+		}
+	});
+	return;
 }
 
 const server = app.listen(process.env.PORT || 3100, () => {
