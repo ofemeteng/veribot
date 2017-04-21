@@ -57,12 +57,11 @@ app.post('/webhook', (req, res) => {
 		data.entry.forEach((entry) => {
 			entry.messaging.forEach((event) => {
 				let senderID = event.sender.id;
+				senderActions(senderID);
 				if (event.message) {
-					senderActions(senderID);
 					receivedMessage(event);
 				}
 				else if (event.postback) {
-					senderActions(senderID);
 					receivedPostback(event);
 				} else {
 					console.log('Error: Webhook received invalid event', event);
@@ -93,9 +92,11 @@ function receivedPostback(event) {
 	let payload = event.postback.payload;
 	let token = process.env.PAGE_ACCESS_TOKEN
 	let profileUrl = `https://graph.facebook.com/v2.6/${senderID}?fields=first_name,last_name&access_token=${token}`
+	console.log('Received postback event')
 
 	// check payload received in postback event in order to send appropriate response
 	if (payload == 'GET_STARTED_PAYLOAD') {
+			console.log('Get started payload received')
 			request.get(profileUrl, (err, response, body) => {
 				if (!err && response.statusCode == 200) {
 					let json = JSON.parse(body);
