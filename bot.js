@@ -34,7 +34,7 @@ app.get('/setup', (req, res) => {
 			  "greeting":[
 			    {
 			      "locale": 'default',
-			      "text": 'Hi, I am Veribot and I can help you identify fake news stories'
+			      "text": 'Hi, I am VeriBot and I can help you identify fake news stories'
 			    }
 			  ]
 		}
@@ -57,11 +57,12 @@ app.post('/webhook', (req, res) => {
 		data.entry.forEach((entry) => {
 			entry.messaging.forEach((event) => {
 				let senderID = event.sender.id;
-				senderActions(senderID);
 				if (event.message) {
+					senderActions(senderID);
 					receivedMessage(event);
 				}
 				else if (event.postback) {
+					senderActions(senderID);
 					receivedPostback(event);
 				} else {
 					console.log('Error: Webhook received invalid event', event);
@@ -101,9 +102,9 @@ function receivedPostback(event) {
 					var text = '';
 					// set personalised message with first name if available in received object
 					if (json.hasOwnProperty('first_name')) {
-						text = 'Hello  ' + json.first_name + ', I am Veribot and I can help you identify fake news stories. \n To get my attention simply type "Is it true that" followed by the news headline or snippet like so, "Is it true that South Koreans mock Trump\'s armada \'bluff\'"';
+						text = 'Hello  ' + json.first_name + ', I am VeriBot and I can help you identify fake news stories. \n To get my attention simply type "Is it true that" followed by the news headline or snippet like so, "Is it true that South Koreans mock Trump\'s armada \'bluff\'"';
 					} else {
-						text = 'Hello , I am Veribot and I can help you identify fake news stories. \n To get my attention simply type "Is it true that" followed by the news headline or snippet like so, "Is it true that South Koreans mock Trump\'s armada \'bluff\'"';
+						text = 'Hello , I am VeriBot and I can help you identify fake news stories. \n To get my attention simply type "Is it true that" followed by the news headline or snippet like so, "Is it true that South Koreans mock Trump\'s armada \'bluff\'"';
 					}
 
 					let messageData = {
