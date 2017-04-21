@@ -91,21 +91,25 @@ function receivedPostback(event) {
 	let recipientID = event.recipient.id;
 	let payload = event.postback.payload;
 	let token = process.env.PAGE_ACCESS_TOKEN
-	let profileUrl = `https://graph.facebook.com/v2.6/${senderID}?fields=first_name,last_name&access_token=${token}`
+	let profileUrl = `https://graph.facebook.com/v2.6/${senderID}?fields=first_name&access_token=${token}`
 	console.log('Received postback event')
+	console.log(senderID)
+	console.log(profileUrl)
+	console.log(token)
 
 	// check payload received in postback event in order to send appropriate response
 	if (payload == 'GET_STARTED_PAYLOAD') {
 			console.log('Get started payload received')
 			request.get(profileUrl, (err, response, body) => {
+				console.log('Sending request for user profile data')
 				if (!err && response.statusCode == 200) {
 					let json = JSON.parse(body);
 					var text = '';
 					// set personalised message with first name if available in received object
 					if (json.hasOwnProperty('first_name')) {
-						text = 'Hello  ' + json.first_name + ', I am VeriBot and I can help you identify fake news stories. \n To get my attention simply type "Is it true that" followed by the news headline or snippet like so, "Is it true that South Koreans mock Trump\'s armada \'bluff\'"';
+						text = 'Hello  ' + json.first_name + ', I am VeriBot and I can help you identify fake news stories. \nTo get my attention simply type "Is it true that" followed by the news headline or snippet like so, "Is it true that South Koreans mock Trump\'s armada \'bluff\'"';
 					} else {
-						text = 'Hello , I am VeriBot and I can help you identify fake news stories. \n To get my attention simply type "Is it true that" followed by the news headline or snippet like so, "Is it true that South Koreans mock Trump\'s armada \'bluff\'"';
+						text = 'Hello, I am VeriBot and I can help you identify fake news stories. \nTo get my attention simply type "Is it true that" followed by the news headline or snippet like so, "Is it true that South Koreans mock Trump\'s armada \'bluff\'"';
 					}
 
 					let messageData = {
