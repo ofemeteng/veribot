@@ -57,11 +57,12 @@ app.post('/webhook', (req, res) => {
 		data.entry.forEach((entry) => {
 			entry.messaging.forEach((event) => {
 				let senderID = event.sender.id;
-				senderActions(senderID);
 				if (event.message) {
+					senderActions(senderID);
 					receivedMessage(event);
 				}
 				else if (event.postback) {
+					senderActions(senderID);
 					receivedPostback(event);
 				} else {
 					console.log('Error: Webhook received invalid event', event);
