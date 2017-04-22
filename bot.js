@@ -101,9 +101,9 @@ function receivedPostback(event) {
 					var text = '';
 					// set personalised message with first name if available in received object
 					if (json.hasOwnProperty('first_name')) {
-						text = 'Hello ' + json.first_name + ', I am VeriBot and I can help you identify fake news stories. \nTo get my attention simply type "Is it true that" followed by the news headline or snippet like so, "Is it true that South Koreans mock Trump\'s armada \'bluff\'"';
+						text = 'Hello ' + json.first_name + ', I am VeriBot and I can help you identify fake news stories. \n\nTo get my attention simply type "Is it true that" followed by the news headline or snippet like so, "Is it true that South Koreans mock Trump\'s armada \'bluff\'"';
 					} else {
-						text = 'Hello, I am VeriBot and I can help you identify fake news stories. \nTo get my attention simply type "Is it true that" followed by the news headline or snippet like so, "Is it true that South Koreans mock Trump\'s armada \'bluff\'"';
+						text = 'Hello, I am VeriBot and I can help you identify fake news stories. \n\nTo get my attention simply type "Is it true that" followed by the news headline or snippet like so, "Is it true that South Koreans mock Trump\'s armada \'bluff\'"';
 					}
 
 					let messageData = {
