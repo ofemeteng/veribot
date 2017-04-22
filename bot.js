@@ -88,14 +88,10 @@ function receivedMessage(event) {
 // handle postback event
 function receivedPostback(event) {
 	let senderID = event.sender.id;
-	let recipientID = event.recipient.id;
 	let payload = event.postback.payload;
 	let token = process.env.PAGE_ACCESS_TOKEN
 	let profileUrl = `https://graph.facebook.com/v2.6/${senderID}?fields=first_name&access_token=${token}`
 	console.log('Received postback event')
-	console.log(senderID)
-	console.log(profileUrl)
-	console.log(token)
 
 	// check payload received in postback event in order to send appropriate response
 	if (payload == 'GET_STARTED_PAYLOAD') {
@@ -114,7 +110,7 @@ function receivedPostback(event) {
 
 					let messageData = {
 						recipient: {
-						id: recipientID
+						id: senderID
 						},
 						message: {
 						  text: text
