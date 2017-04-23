@@ -124,7 +124,6 @@ function sendGenericMessage(recipientID, messageText) {
 	apiai.on('response', (response) => {
 	    // Got a response from api.ai. Let's POST to Facebook Messenger
 	    let aiText = response.result.fulfillment.speech;
-	    console.log(aiText);
 
 	    // send structured message to Facebook Messenger, api.ai intent resolved
 	    if (aiText.includes('*')) {
@@ -201,7 +200,7 @@ function sendButtonMessage(recipientID, messageText, tipsUrl) {
 					    	    {
 					    	    	"type": 'web_url',
 					    	    	"url": tipsUrl,
-					    	    	"title": 'Fake News Tips'
+					    	    	"title": 'Tips to Detetect Fake News'
 					    	    }
 					    	]
 				}
