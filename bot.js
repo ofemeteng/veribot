@@ -208,6 +208,8 @@ function sendButtonmessage(recipientID, messageText, tipsUrl) {
 			}
 		}
 	}
+
+	callSendAPI(messageData);
 }
 
 // Webhook for API.AI intents matched from a user's message
