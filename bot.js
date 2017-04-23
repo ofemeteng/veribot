@@ -80,7 +80,7 @@ function receivedMessage(event) {
            let messageAttachments = event.message.attachments;
 
            if (messageText) {
-             sendTextMessage(senderID, messageText);
+             sendGenericMessage(senderID, messageText);
            } else if (messageAttachments) {
              sendTextMessage(senderID, "Message with attachment received");
            }
@@ -107,16 +107,7 @@ function receivedPostback(event) {
 						text = 'Hello, I am VeriBot and I can help you identify fake news stories. \n\nTo get my attention simply type "Is it true that" followed by the news headline or snippet like so, "Is it true that South Koreans mock Trump\'s armada \'bluff\'"';
 					}
 
-					let messageData = {
-						recipient: {
-						id: senderID
-						},
-						message: {
-						  text: text
-						}
-					}
-
-					callSendAPI(messageData);
+					sendTextMessage(senderID, text);
 					
 				} else {
 					console.log('Error: Failed to get user profile')
@@ -125,7 +116,7 @@ function receivedPostback(event) {
 	}
 }
 
-function sendTextMessage(recipientID, messageText) {
+function sendGenericMessage(recipientID, messageText) {
 	let apiai = apiaiApp.textRequest(messageText, {
 	    sessionId: process.env.SESSION_ID // use any arbitrary id
 	  });
@@ -134,16 +125,50 @@ function sendTextMessage(recipientID, messageText) {
 	    // Got a response from api.ai. Let's POST to Facebook Messenger
 	    let aiText = response.result.fulfillment.speech;
 
-	    let messageData = {
-	        recipient: {
-	          id: recipientID
-	        },
-	        message: {
-	          text: aiText
-	        }
-	     };
+	    // send structured message to Facebook Messenger, api.ai intent resolved
+	    if (aiText.includes('*')) {
+	    	let [prediction, probabilty, claim] = aiText.split('*');
+		let imgUrl = '';
+		let tipsUrl = 'https://web.facebook.com/help/188118808357379'
 
-	     callSendAPI(messageData);
+		if (prediction == 'fake') {
+			imgUrl = 'http://i.imgur.com/gq3FYjD.png';
+		} else if (prediction == 'real') {
+			imgUrl = 'http://i.imgur.com/RW2v1Ul.png';
+		}
+
+		let messageData = {
+		    recipient: {
+		      id: recipientID
+		    },
+		    message: {
+		    	"attachment": {
+		    		"type": "template",
+		    		"payload": {
+		    			"template_type":"generic",
+		    			"elements": [
+		    			    {
+		    			    	"title": `I am ${probabilty}% sure about that`,
+		    			    	"subtitle": `The news story ${claim} is ${prediction}`,
+		    			    	"image_url": imgUrl,
+		    			    	"buttons": [
+		    			    	    {
+		    			    	    	"type": 'web_url',
+		    			    	    	"url": tipsUrl,
+		    			    	    	"title": 'Tips to Detect Fake News'
+		    			    	    }
+		    			    	]
+		    			    }
+		    			]
+		    		}
+		    	}
+		    }
+		 };
+
+		 callSendAPI(messageData);
+	    } else {
+	    	sendTextMessage(recipientID, aiText);
+	    }
 	});
 
 	apiai.on('error', (error) => {
@@ -151,6 +176,19 @@ function sendTextMessage(recipientID, messageText) {
 	});
 
 	apiai.end();	 
+}
+
+function sendTextMessage(recipientID, messageText) {
+	let messageData = {
+	    recipient: {
+	       id: recipientID
+	    },
+	    message: {
+	       text: messageText
+	    }
+	};
+
+	callSendAPI(messageData);
 }
 
 // Webhook for API.AI intents matched from a user's message
@@ -165,7 +203,7 @@ app.post('/ai', (req, res) => {
 				let json = JSON.parse(body);
 				let prediction = json.prediction.toLowerCase();
 				let probabilty = json.probabilty;
-				let msg = `The news story "${claim}" is ${prediction}, I am ${probabilty}% sure about that`;
+				let msg = `${prediction}*${probabilty}*${claim}`
 				return res.json({
 					speech: msg,
 					displayText: msg,
