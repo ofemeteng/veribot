@@ -133,9 +133,9 @@ function sendGenericMessage(recipientID, messageText) {
 		let tipsUrl = 'https://web.facebook.com/help/188118808357379'
 
 		if (prediction == 'fake') {
-			imgUrl = 'http://i.imgur.com/gq3FYjD.png';
+			imgUrl = 'http://i.imgur.com/0zOmD8U.png';
 		} else if (prediction == 'real') {
-			imgUrl = 'http://i.imgur.com/RW2v1Ul.png';
+			imgUrl = 'http://i.imgur.com/0Bex9nL.png';
 		}
 
 		let messageData = {
@@ -156,7 +156,7 @@ function sendGenericMessage(recipientID, messageText) {
 		    			    	    {
 		    			    	    	"type": 'web_url',
 		    			    	    	"url": tipsUrl,
-		    			    	    	"title": 'Tips to Detect Fake News'
+		    			    	    	"title": 'Fake News Tips'
 		    			    	    }
 		    			    	]
 		    			    }
@@ -204,7 +204,7 @@ app.post('/ai', (req, res) => {
 				let json = JSON.parse(body);
 				let prediction = json.prediction.toLowerCase();
 				let probabilty = json.probabilty;
-				let msg = `${prediction}*${probabilty}*${claim}`
+				let msg = `${prediction}*${probabilty}*${claim}`;
 				return res.json({
 					speech: msg,
 					displayText: msg,
