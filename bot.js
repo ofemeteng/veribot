@@ -160,7 +160,7 @@ function sendGenericMessage(recipientID, messageText) {
 		};
 
 		callSendAPI(messageData);
-		// sendButtonMessage(recipientID, text, tipsUrl);
+		sendButtonMessage(recipientID, text, tipsUrl);
 	    } else {
 	    	sendTextMessage(recipientID, aiText);
 	    }
@@ -257,6 +257,9 @@ function callSendAPI(messageData) {
 			console.error('Error: Message sending failed', error);
 		}
 	});
+
+	// return to call site in case there are other messages to send
+	return;
 }
 
 // Set typing indicator
