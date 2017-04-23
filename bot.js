@@ -131,6 +131,7 @@ function sendGenericMessage(recipientID, messageText) {
 	    	let [prediction, probabilty, claim] = aiText.split('*');
 		let imgUrl = '';
 		let tipsUrl = 'https://web.facebook.com/help/188118808357379'
+		let text = `The news story ${claim} is ${prediction}`;
 
 		if (prediction == 'fake') {
 			imgUrl = 'http://i.imgur.com/0zOmD8U.png';
@@ -150,15 +151,7 @@ function sendGenericMessage(recipientID, messageText) {
 		    			"elements": [
 		    			    {
 		    			    	"title": `I am ${probabilty}% sure about that`,
-		    			    	"subtitle": `The news story ${claim} is ${prediction}`,
 		    			    	"image_url": imgUrl,
-		    			    	"buttons": [
-		    			    	    {
-		    			    	    	"type": 'web_url',
-		    			    	    	"url": tipsUrl,
-		    			    	    	"title": 'Fake News Tips'
-		    			    	    }
-		    			    	]
 		    			    }
 		    			]
 		    		}
@@ -167,6 +160,7 @@ function sendGenericMessage(recipientID, messageText) {
 		};
 
 		callSendAPI(messageData);
+		sendButtonmessage(recipientID, text, tipsUrl)
 	    } else {
 	    	sendTextMessage(recipientID, aiText);
 	    }
@@ -190,6 +184,30 @@ function sendTextMessage(recipientID, messageText) {
 	};
 
 	callSendAPI(messageData);
+}
+
+function sendButtonmessage(recipientID, messageText, tipsUrl) {
+	let messageData = {
+		recipient: {
+		  id: recipientID
+		},
+		message: {
+			"attachment": {
+				"type": "template",
+				"payload": {
+					"template_type":"button",
+					"text": messageText,
+					    	"buttons": [
+					    	    {
+					    	    	"type": 'web_url',
+					    	    	"url": tipsUrl,
+					    	    	"title": 'Fake News Tips'
+					    	    }
+					    	]
+				}
+			}
+		}
+	}
 }
 
 // Webhook for API.AI intents matched from a user's message
