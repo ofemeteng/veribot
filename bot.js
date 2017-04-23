@@ -130,7 +130,7 @@ function sendGenericMessage(recipientID, messageText) {
 	    	let [prediction, probabilty, claim] = aiText.split('*');
 		let imgUrl = '';
 		let tipsUrl = 'https://web.facebook.com/help/188118808357379'
-		let text = `The news story "${claim}" is ${prediction}`;
+		let text = `The news story, "${claim}" is ${prediction}`;
 
 		if (prediction == 'fake') {
 			imgUrl = 'http://i.imgur.com/4wHZox3.png';
