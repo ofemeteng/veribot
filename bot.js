@@ -118,7 +118,7 @@ function receivedPostback(event) {
 
 function sendGenericMessage(recipientID, messageText) {
 	let apiai = apiaiApp.textRequest(messageText, {
-	    sessionId: process.env.SESSION_ID // use any arbitrary id
+	    sessionId: process.env.SESSION_ID // use any arbitrary id for session
 	  });
 
 	apiai.on('response', (response) => {
