@@ -173,6 +173,7 @@ function sendGenericMessage(recipientID, messageText) {
 			}
 		});
 	    } else {
+	    	// send text using api.ai smalltalk domain if itent not matched
 	    	sendTextMessage(recipientID, aiText);
 	    }
 	});
