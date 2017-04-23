@@ -158,8 +158,20 @@ function sendGenericMessage(recipientID, messageText) {
 		    }
 		};
 
-		callSendAPI(messageData);
-		sendButtonMessage(recipientID, text, tipsUrl);
+		// generic message sent first and button message sent in the callback
+		request({
+			uri: 'https://graph.facebook.com/v2.6/me/messages',
+			qs: {access_token: process.env.PAGE_ACCESS_TOKEN},
+			method: 'POST',
+			json: messageData
+		}, (error, response, body) => {
+			if (!error && response.statusCode == 200) {
+				console.log('Generic template message sent sucessfully to the recipient');
+				sendButtonMessage(recipientID, text, tipsUrl);
+			} else {
+				console.error('Error: Message sending failed', error);
+			}
+		});
 	    } else {
 	    	sendTextMessage(recipientID, aiText);
 	    }
@@ -200,7 +212,7 @@ function sendButtonMessage(recipientID, messageText, tipsUrl) {
 					    	    {
 					    	    	"type": 'web_url',
 					    	    	"url": tipsUrl,
-					    	    	"title": 'Tips to Detetect Fake News'
+					    	    	"title": 'Fake News Tips'
 					    	    }
 					    	]
 				}
@@ -256,9 +268,6 @@ function callSendAPI(messageData) {
 			console.error('Error: Message sending failed', error);
 		}
 	});
-
-	// return to call site in case there are other messages to send
-	return;
 }
 
 // Set typing indicator
