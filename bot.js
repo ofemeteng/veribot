@@ -134,9 +134,9 @@ function sendGenericMessage(recipientID, messageText) {
 		let text = `The news story ${claim} is ${prediction}`;
 
 		if (prediction == 'fake') {
-			imgUrl = 'http://i.imgur.com/0zOmD8U.png';
+			imgUrl = 'http://i.imgur.com/4wHZox3.png';
 		} else if (prediction == 'real') {
-			imgUrl = 'http://i.imgur.com/0Bex9nL.png';
+			imgUrl = 'http://i.imgur.com/v6XYMku.png';
 		}
 
 		let messageData = {
@@ -160,7 +160,7 @@ function sendGenericMessage(recipientID, messageText) {
 		};
 
 		callSendAPI(messageData);
-		sendButtonmessage(recipientID, text, tipsUrl)
+		// sendButtonMessage(recipientID, text, tipsUrl);
 	    } else {
 	    	sendTextMessage(recipientID, aiText);
 	    }
@@ -186,7 +186,7 @@ function sendTextMessage(recipientID, messageText) {
 	callSendAPI(messageData);
 }
 
-function sendButtonmessage(recipientID, messageText, tipsUrl) {
+function sendButtonMessage(recipientID, messageText, tipsUrl) {
 	let messageData = {
 		recipient: {
 		  id: recipientID
