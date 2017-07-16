@@ -1,2 +1,8 @@
 /node_modules
 .env
+mlapi/__pycache__/
+mlapi/venv/
+mlapi/data/fake_or_real_news.csv
+jupyter_notebook/fake_or_real_news.csv
+node_modules/
+.ipynb_checkpoints/
